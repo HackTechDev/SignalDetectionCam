@@ -2,11 +2,19 @@ import numpy as np
 import cv2
 import glob
 
+def nothing(x):
+    pass
 
 cap = cv2.VideoCapture(0)
 
+cv2.namedWindow("Detected")
+cv2.createTrackbar("Threshold_tb", "Detected", 1, 10, nothing)
+
+
 while True:
     ret, img_rgb = cap.read()
+
+    threshold_value = cv2.getTrackbarPos("Threshold_tb", "Detected")
 
 
     for f in glob.iglob("signe/*"):
@@ -16,7 +24,9 @@ while True:
         w, h = template.shape[::-1]
 
         res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
-        threshold = 0.5
+
+        threshold = threshold_value / 10
+
         loc = np.where( res >= threshold)
 
         flag = False
