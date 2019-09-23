@@ -13,12 +13,9 @@ def nothing(x):
 
 
 def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
-    # Création des fenêtres
-    cv2.namedWindow('Gap_between_frame')
-    cv2.namedWindow('Thresh')
-    cv2.namedWindow('Security_Feed')
+    cv2.namedWindow('SignalDetectionCam')
     
-    cv2.createTrackbar("Threshold_tb", "Security_Feed", 1, 10, nothing)
+    cv2.createTrackbar("Threshold_tb", "SignalDetectionCam", 1, 10, nothing)
 
     firstFrame = None
     cap = cv2.VideoCapture(cam)
@@ -27,7 +24,7 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
     while loop:
         rval, frame = cap.read()
 
-        threshold_value = cv2.getTrackbarPos("Threshold_tb", "Security_Feed")
+        threshold_value = cv2.getTrackbarPos("Threshold_tb", "SignalDetectionCam")
 
 
         # Si la webcam à une image
@@ -54,7 +51,8 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                 for c in contours:
                     if cv2.contourArea(c) > area:
 
-                        print("Mouvement detection: ", counter)
+                        print("Log: Move detected " + str(counter))
+
                         firstFrame = None 
 
 
@@ -67,7 +65,7 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                             res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
 
                             #threshold = threshold_value / 10
-                            threshold = 0.8
+                            threshold = 0.7
 
                             loc = np.where( res >= threshold)
 
@@ -79,21 +77,17 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                                 cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (255, 0, 0), 2)
 
                             if flag == True:
-                                print(f, end='')
-                                print("Detected")
+                                print("log: " + f)
+
+                                cv2.putText(frame, f, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
                                 break
                                             
-
-
                         # Un rectangle incluant la zone
                         (x, y, w, h) = cv2.boundingRect(c)
                         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                        cv2.imshow("Gap_between_frame", delta)
-                        cv2.imshow("Thresh", thresh)
-                        cv2.imshow("Security_Feed", frame)
-
-
+                        cv2.imshow("SignalDetectionCam", frame)
 
                         # Echap pour quitter dans une fenêtre
                         if cv2.waitKey(tempo) & 0xFF == 27:

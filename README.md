@@ -1,2 +1,2 @@
-Template matching
-=================
+Signal Detection Cam
+====================
