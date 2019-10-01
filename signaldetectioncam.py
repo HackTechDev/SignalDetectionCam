@@ -66,7 +66,7 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                             res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
 
                             #threshold = threshold_value / 10
-                            threshold = 0.6
+                            threshold = 0.7
 
                             loc = np.where( res >= threshold)
 
