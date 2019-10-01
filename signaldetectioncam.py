@@ -3,10 +3,11 @@
 
 # https://ressources.labomedia.org/detection_de_mouvement_avec_opencv_en_python
 
-
 import numpy as np
 import cv2
 import glob
+import json
+
 
 def nothing(x):
     pass
@@ -65,7 +66,7 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                             res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
 
                             #threshold = threshold_value / 10
-                            threshold = 0.7
+                            threshold = 0.6
 
                             loc = np.where( res >= threshold)
 
@@ -80,7 +81,13 @@ def motion_detector(cam, flou, seuil_0, seuil_1, area, tempo):
                                 print("log: " + f)
 
                                 cv2.putText(frame, f, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                    
+                                pointPos = f.find('.')
+                                signalNumber = f[11:pointPos]                              
 
+                                signal_dict = {"signal": signalNumber}
+                                with open('/home/pi/public_html/telegraphechappe_web/signal.json', 'w') as json_file:
+                                    json.dump(signal_dict, json_file)
                                 break
                                             
                         # Un rectangle incluant la zone
